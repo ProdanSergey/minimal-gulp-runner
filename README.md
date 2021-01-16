@@ -1,4 +1,4 @@
-# GULP-Suite
+# Minimal GULP runner
 - compile PUG files
 - compile SCSS files
 - minify CSS styles
