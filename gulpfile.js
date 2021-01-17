@@ -1,12 +1,14 @@
 const { src, dest, watch, series, parallel } = require('gulp');
 const plumber = require('gulp-plumber');
 const pug = require('gulp-pug');
+const htmlmin = require('gulp-htmlmin');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
+const imagemin = require('gulp-imagemin');
+const svgSprite = require('gulp-svg-sprite');
 const del = require('del');
-const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
 
 const config = {
@@ -20,35 +22,87 @@ const config = {
   },
   scss: {
     src: './src/scss/index.scss',
-    output: 'styles.css',
-    dest: './src',
+    dest: './src/assets/styles/',
     watch: './src/scss/**/*.scss',
     options: { 
       outputStyle: 'expanded' 
     }
   },
-  css: {
-    src: './src/*.css',
-    dest: './build',
-    options: { base: 'src' },
-    autoprefixer: { cascade: false, grid: 'autoplace', flexbox: "no-2009" }
+  sprite: {
+    src: '**/*.svg',
+    dest: './src/assets/sprite/',
+    watch: './src/assets/icons/**/*.svg',
+    options: { cwd: './src/assets/icons/' },
+    svgo: {
+      dest: './sprite',
+      shape: {
+        dimension: {
+          maxWidth: 32,
+          maxHeight: 32
+        },
+        spacing: {
+					padding: 5
+				}
+      },
+      mode: {
+        css: {
+          sprite : './svg/sprite.css.svg',
+          prefix: '.svg-css-',
+          layout: 'diagonal',
+          bust: false,
+          render: {
+            css: {
+              dest: '../../styles/sprite.css.css'
+            }
+          }
+        },
+        view: {
+          sprite : './svg/sprite.view.svg',
+          prefix: '.svg-view-',
+          layout: 'diagonal',
+          bust: false,
+          render: {
+            css: {
+              dest: '../../styles/sprite.view.css'
+            }
+          }
+        },
+        defs: true, 
+        symbol: true,
+        stack: true
+      }
+    }
   },
   html: {
     src: './src/*.html',
     dest: './build',
-    watch: './src/*.html',
-    options: { base: 'src' }
+    options: { base: 'src' },
+    minifier: { collapseWhitespace: true }
+  },
+  css: {
+    src: './src/assets/styles/*.css',
+    dest: './build',
+    options: { base: 'src' },
+    autoprefixer: { cascade: false, grid: 'autoplace', flexbox: 'no-2009' }
+  },
+  assets: {
+    src: ['src/assets/**', '!src/assets/styles/**', '!src/assets/icons/**'],
+    dest: 'build/assets/',
+    plugins: {
+      gif: {interlaced: true},
+      jpg: {quality: 75, progressive: true},
+      png: {optimizationLevel: 5},
+    }
   },
   clean: {
     dist: {
-      src: './build/*'
+      src: './build'
     },
     dev: {
-      src: './src/*.{css,html}'
+      src: './src/*.html'
     }
   },
   browserSync: {
-    watch: './src/*.{css,html}',
     options: {
       server: { baseDir: './src' }, 
       notify: false,
@@ -57,12 +111,22 @@ const config = {
   }
 };
 
+function compileSprite() {
+  return src(config.sprite.src, config.sprite.options)
+  .pipe(plumber())
+  .pipe(svgSprite(config.sprite.svgo))
+  .on('error', console.log)
+  .pipe(dest(config.sprite.dest))
+  .pipe(browserSync.stream());
+};
+
 function compilePUG() {
   return src(config.pug.src)
     .pipe(plumber())
     .pipe(pug(config.pug.options))
     .on('error', console.log)
     .pipe(dest(config.pug.dest))
+    .pipe(browserSync.stream());
 };
 
 function compileSCSS() {
@@ -70,8 +134,8 @@ function compileSCSS() {
     .pipe(plumber())
     .pipe(sass(config.scss.options))
     .on('error', console.log)
-    .pipe(rename(config.scss.output))
     .pipe(dest(config.scss.dest))
+    .pipe(browserSync.stream());
 };
 
 function cleanDist() {
@@ -80,6 +144,12 @@ function cleanDist() {
 
 function cleanDev() {
   return del(config.clean.dev.src);
+};
+
+function processHTML() {
+  return src(config.html.src, config.html.options)
+    .pipe(htmlmin(config.html.minifier))
+    .pipe(dest(config.html.dest));
 };
 
 function processCSS() {
@@ -91,15 +161,14 @@ function processCSS() {
     .pipe(dest(config.css.dest));
 };
 
-function processHTML() {
-  return src(config.html.src, config.html.options)
-    .pipe(dest(config.html.dest));
-};
-
-function reloadBrowser(done) {
-  browserSync.reload();
-
-  done();
+function processAssets() {
+  return src(config.assets.src, config.assets.options)
+    .pipe(imagemin([
+        imagemin.gifsicle(config.assets.plugins.gif),
+        imagemin.mozjpeg(config.assets.plugins.jpg),
+        imagemin.optipng(config.assets.plugins.png),
+    ]))
+    .pipe(dest(config.assets.dest))
 };
 
 function syncChanges(done) {
@@ -107,14 +176,13 @@ function syncChanges(done) {
   
   watch(config.pug.watch, compilePUG);
   watch(config.scss.watch, compileSCSS);
-
-  watch(config.browserSync.watch, reloadBrowser);
+  watch(config.sprite.watch, compileSprite);
 
   done();
 };
 
-const compile = parallel(compilePUG, compileSCSS);
-const build = parallel(processHTML, processCSS);
+const compile = parallel(compilePUG, compileSCSS, compileSprite);
+const build = parallel(processHTML, processCSS, processAssets);
 
 exports.dev = series(cleanDev, compile, syncChanges);
 exports.default = series(cleanDist, compile, build);
