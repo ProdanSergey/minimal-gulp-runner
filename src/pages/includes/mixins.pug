@@ -1,0 +1,22 @@
+- const getPathnameByMode = (mode, name) => `./assets/sprite/${mode}/svg/sprite.${mode}.svg#${name}`
+
+mixin icon(name = 'avatar', mode = 'symbol', background = false)
+  case name
+    when 'css'
+      i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
+    when 'view'
+      if background
+        i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
+      else 
+        img(src=getPathnameByMode(mode, name) title=name)
+    when 'defs'
+      svg
+        use(xlink:href=getPathnameByMode(mode, name))
+    when 'stack'
+      if background
+        i(style=`background: url(${getPathnameByMode(mode, name)} no-repeat 50% 50%`)= name
+      else 
+        img(src=getPathnameByMode(mode, name) title=name)
+    default
+      svg.icon
+        use(xlink:href=getPathnameByMode(mode, name))
