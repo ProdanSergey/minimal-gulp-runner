@@ -2,6 +2,7 @@ const { src, dest, watch, series, parallel } = require('gulp');
 const plumber = require('gulp-plumber');
 const pug = require('gulp-pug');
 const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
 const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
 const del = require('del');
@@ -29,7 +30,8 @@ const config = {
   css: {
     src: './src/*.css',
     dest: './build',
-    options: { base: 'src' }
+    options: { base: 'src' },
+    autoprefixer: { cascade: false, grid: 'autoplace', flexbox: "no-2009" }
   },
   html: {
     src: './src/*.html',
@@ -83,6 +85,7 @@ function cleanDev() {
 function processCSS() {
   return src(config.css.src, config.css.options)
     .pipe(sourcemaps.init())
+    .pipe(autoprefixer(config.css.autoprefixer))
     .pipe(cleanCSS())
     .pipe(sourcemaps.write())
     .pipe(dest(config.css.dest));
