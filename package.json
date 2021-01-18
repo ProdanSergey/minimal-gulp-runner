@@ -1,25 +1,40 @@
 {
-  "name": "minimal-gulp-runner",
-  "version": "1.0.0",
-  "description": "A GULP Boilerplate for a quick start.",
-  "scripts": {
-    "setup": "npm install -g gulp-cli && npm install -D gulp gulp-pug gulp-htmlmin node-sass gulp-sass gulp-clean-css gulp-sourcemaps gulp-autoprefixer gulp-plumber gulp-imagemin gulp-svg-sprite browser-sync del"
-  },
-  "author": "ProdanSergey",
-  "license": "ISC",
-  "devDependencies": {
-    "browser-sync": "^2.26.13",
-    "del": "^6.0.0",
-    "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^7.0.1",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-htmlmin": "^5.0.1",
-    "gulp-imagemin": "^7.1.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-pug": "^4.0.1",
-    "gulp-sass": "^4.1.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-svg-sprite": "^1.5.0",
-    "node-sass": "^5.0.0"
-  }
+	"name": "minimal-gulp-runner",
+	"version": "1.0.0",
+	"description": "A GULP Boilerplate for a quick start.",
+	"scripts": {
+		"setup": "npm install -g gulp-cli && npm install -D gulp gulp-pug gulp-htmlmin node-sass gulp-sass gulp-clean-css gulp-sourcemaps gulp-autoprefixer gulp-plumber gulp-imagemin gulp-svg-sprite browser-sync del",
+		"prettify": "prettier --write ."
+	},
+	"author": "ProdanSergey",
+	"license": "MIT",
+	"devDependencies": {
+		"@prettier/plugin-pug": "^1.13.2",
+		"browser-sync": "^2.26.13",
+		"del": "^6.0.0",
+		"eslint": "^7.18.0",
+		"eslint-config-prettier": "^7.1.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"gulp": "^4.0.2",
+		"gulp-autoprefixer": "^7.0.1",
+		"gulp-clean-css": "^4.3.0",
+		"gulp-htmlmin": "^5.0.1",
+		"gulp-imagemin": "^7.1.0",
+		"gulp-plumber": "^1.2.1",
+		"gulp-pug": "^4.0.1",
+		"gulp-sass": "^4.1.0",
+		"gulp-sourcemaps": "^3.0.0",
+		"gulp-svg-sprite": "^1.5.0",
+		"node-sass": "^5.0.0",
+		"prettier": "^2.2.1",
+		"pug-lint": "^2.6.0",
+		"stylelint": "^13.8.0",
+		"stylelint-config-prettier": "^8.0.2",
+		"stylelint-prettier": "^1.1.2"
+	},
+	"eslintIgnore": [
+		"node_modules",
+		"build"
+	],
+	"dependencies": {}
 }

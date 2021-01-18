@@ -1,13 +1,15 @@
 include ../includes/mixins.pug
 
 doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet", href="assets/styles/index.css")
-    link(rel="stylesheet", href="assets/styles/sprite.css.css")
-    link(rel="stylesheet", href="assets/styles/sprite.view.css")
-    block title
-  body
-    main: block content
+html(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		link(rel='stylesheet', href='assets/styles/index.css')
+		if sprite.includes('css')
+			link(rel='stylesheet', href='assets/styles/sprite.css.css')
+		if sprite.includes('view')
+			link(rel='stylesheet', href='assets/styles/sprite.view.css')
+		block title
+	body
+		main: block content
