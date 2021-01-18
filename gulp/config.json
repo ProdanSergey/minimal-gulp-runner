@@ -15,7 +15,8 @@
 		"dest": "./src/assets/styles/",
 		"watch": "./src/scss/**/*.scss",
 		"options": {
-			"outputStyle": "expanded"
+			"outputStyle": "expanded",
+			"includePaths": ["node_modules/normalize-scss/sass/"]
 		}
 	},
 	"sprite": {
