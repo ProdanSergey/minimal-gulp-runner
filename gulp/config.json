@@ -1,0 +1,112 @@
+{
+	"pug": {
+		"src": "./src/pages/*.pug",
+		"dest": "./src/",
+		"watch": "./src/pages/**/*.pug",
+		"options": {
+			"pretty": true,
+			"locals": {
+				"sprite": ["css", "symbol"]
+			}
+		}
+	},
+	"sass": {
+		"src": "./src/scss/index.scss",
+		"dest": "./src/assets/styles/",
+		"watch": "./src/scss/**/*.scss",
+		"options": {
+			"outputStyle": "expanded"
+		}
+	},
+	"sprite": {
+		"src": "**/*.svg",
+		"dest": "./src/assets/sprite/",
+		"watch": "./src/assets/icons/**/*.svg",
+		"options": {
+			"cwd": "./src/assets/icons/"
+		},
+		"svgo": {
+			"dest": "./sprite",
+			"shape": {
+				"dimension": {
+					"maxWidth": 32,
+					"maxHeight": 32
+				},
+				"spacing": {
+					"padding": 5
+				}
+			},
+			"mode": {
+				"css": {
+					"sprite": "./svg/sprite.css.svg",
+					"prefix": ".svg-css-",
+					"layout": "diagonal",
+					"bust": false,
+					"render": {
+						"css": {
+							"dest": "../../styles/sprite.css.css"
+						}
+					}
+				},
+				"defs": false,
+				"symbol": true,
+				"stack": false
+			}
+		}
+	},
+	"html": {
+		"src": "./src/*.html",
+		"dest": "./build",
+		"options": {
+			"base": "src"
+		},
+		"minifier": {
+			"collapseWhitespace": true
+		}
+	},
+	"css": {
+		"src": "./src/assets/styles/*.css",
+		"dest": "./build",
+		"options": {
+			"base": "src"
+		},
+		"autoprefixer": {
+			"cascade": false,
+			"grid": "autoplace",
+			"flexbox": "no-2009"
+		}
+	},
+	"assets": {
+		"src": ["src/assets/**", "!src/assets/styles/**", "!src/assets/icons/**"],
+		"dest": "build/assets/",
+		"plugins": {
+			"gif": {
+				"interlaced": true
+			},
+			"jpg": {
+				"quality": 75,
+				"progressive": true
+			},
+			"png": {
+				"optimizationLevel": 5
+			}
+		}
+	},
+	"clean": {
+		"dist": {
+			"src": "./build"
+		},
+		"dev": {
+			"src": "./src/*.html"
+		}
+	},
+	"browserSync": {
+		"options": {
+			"server": {
+				"baseDir": "./src"
+			},
+			"notify": false,
+			"online": true
+		}
+	}
+}

@@ -1,22 +1,29 @@
-- const getPathnameByMode = (mode, name) => `./assets/sprite/${mode}/svg/sprite.${mode}.svg#${name}`
+- const getPathnameByMode = (mode, name) => `./assets/sprite/${mode}/svg/sprite.${mode}.svg#${name}`;
 
 mixin icon(name = 'avatar', mode = 'symbol', background = false)
-  case name
-    when 'css'
-      i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
-    when 'view'
-      if background
-        i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
-      else 
-        img(src=getPathnameByMode(mode, name) title=name)
-    when 'defs'
-      svg
-        use(xlink:href=getPathnameByMode(mode, name))
-    when 'stack'
-      if background
-        i(style=`background: url(${getPathnameByMode(mode, name)} no-repeat 50% 50%`)= name
-      else 
-        img(src=getPathnameByMode(mode, name) title=name)
-    default
-      svg.icon
-        use(xlink:href=getPathnameByMode(mode, name))
+	case mode
+		when 'css'
+			i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
+		when 'view'
+			if background
+				i(class=[`svg-${mode}-${name} svg-${mode}-${name}-dims`])= name
+			else
+				img(src=getPathnameByMode(mode, name), width='42', height='42', title=name)
+		when 'defs'
+			svg(viewBox='0 0 42 42', width='42', height='42')
+				use(xlink:href=getPathnameByMode(mode, name))
+		when 'stack'
+			-
+				const style = {
+				  width: '42px',
+				  height:'42px',
+				  background: `url(${getPathnameByMode(mode, name)}) no-repeat 50% 50%`
+				}
+
+			if background
+				i(style=style)= name
+			else
+				img(src=getPathnameByMode(mode, name), width='42', height='42', title=name)
+		default
+			svg(width='42', height='42')
+				use(xlink:href=getPathnameByMode(mode, name))
