@@ -10,6 +10,12 @@ html(lang='en')
 			link(rel='stylesheet', href='assets/styles/sprite.css.css')
 		if sprite.includes('view')
 			link(rel='stylesheet', href='assets/styles/sprite.view.css')
-		block title
+		title
+			block title
 	body
-		main: block content
+		header
+			block header
+		main
+			block content
+		footer
+			block footer
