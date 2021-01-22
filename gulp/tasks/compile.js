@@ -6,12 +6,21 @@ const gulpSvgSprite = require('gulp-svg-sprite');
 
 const { sprite, pug, sass, browserSync } = require('../config.json');
 
+const onError = ({ plugin, msg, line, column }) => {
+	console.log(`
+		ERROR AT ${plugin}
+			line: ${line}, 
+			column: ${column}, 
+			message: ${msg}
+	`);
+};
+
 module.exports = function (bs) {
 	function compileSprite() {
 		return src(sprite.src, sprite.options)
 			.pipe(plumber())
 			.pipe(gulpSvgSprite(sprite.svgo))
-			.on('error', console.log)
+			.on('error', onError)
 			.pipe(dest(sprite.dest))
 			.pipe(bs.stream());
 	}
@@ -20,7 +29,7 @@ module.exports = function (bs) {
 		return src(pug.src)
 			.pipe(plumber())
 			.pipe(gulpPug(pug.options))
-			.on('error', console.log)
+			.on('error', onError)
 			.pipe(dest(pug.dest))
 			.pipe(bs.stream());
 	}
@@ -29,7 +38,7 @@ module.exports = function (bs) {
 		return src(sass.src)
 			.pipe(plumber())
 			.pipe(gulpSass(sass.options))
-			.on('error', console.log)
+			.on('error', onError)
 			.pipe(dest(sass.dest))
 			.pipe(bs.stream());
 	}
