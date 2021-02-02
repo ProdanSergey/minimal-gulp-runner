@@ -3,9 +3,10 @@ const htmlmin = require('gulp-htmlmin');
 const autoprefixer = require('gulp-autoprefixer');
 const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
 const imagemin = require('gulp-imagemin');
 
-const { html, css, assets } = require('../config.json');
+const { html, css, js, assets } = require('../config.json');
 
 function processHTML() {
 	return src(html.src, html.options)
@@ -22,6 +23,14 @@ function processCSS() {
 		.pipe(dest(css.dest));
 }
 
+function processJS() {
+	return src(js.src.build, js.options)
+		.pipe(sourcemaps.init())
+		.pipe(uglify(js.uglify))
+		.pipe(sourcemaps.write())
+		.pipe(dest(js.dest.build));
+}
+
 function processAssets() {
 	return src(assets.src, assets.options)
 		.pipe(
@@ -35,5 +44,5 @@ function processAssets() {
 }
 
 module.exports = {
-	build: parallel(processHTML, processCSS, processAssets),
+	build: parallel(processHTML, processCSS, processJS, processAssets),
 };
