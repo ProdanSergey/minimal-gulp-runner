@@ -77,8 +77,28 @@
 			"flexbox": "no-2009"
 		}
 	},
+	"js": {
+		"src": {
+			"build": "./src/assets/js/*.js",
+			"compile": "./src/js/**/*.js"
+		},
+		"dest": {
+			"build": "./build/",
+			"compile": "./src/assets/"
+		},
+		"watch": "./src/js/**/*.js",
+		"options": {
+			"base": "src"
+		},
+		"babel": {
+			"presets": ["@babel/env"]
+		},
+		"uglify": {
+			
+		}
+	},
 	"assets": {
-		"src": ["src/assets/**", "!src/assets/styles/**", "!src/assets/icons/**"],
+		"src": ["src/assets/**", "!src/assets/styles/**", "!src/assets/js/**", "!src/assets/icons/**"],
 		"dest": "build/assets/",
 		"plugins": {
 			"gif": {

@@ -3,16 +3,24 @@ const plumber = require('gulp-plumber');
 const gulpPug = require('gulp-pug');
 const gulpSass = require('gulp-sass');
 const gulpSvgSprite = require('gulp-svg-sprite');
+const gulpBabel = require('gulp-babel');
 
-const { sprite, pug, sass, browserSync } = require('../config.json');
+const { sprite, pug, sass, js, browserSync } = require('../config.json');
 
-const onError = ({ plugin, msg, line, column }) => {
-	console.log(`
-		ERROR AT ${plugin}
+const onError = ({ plugin, message, msg, line, column }) => {
+	let output;
+
+	if (msg) {
+		output = `
 			line: ${line}, 
 			column: ${column}, 
 			message: ${msg}
-	`);
+		`;
+	} else {
+		output = message;
+	}
+
+	console.log(`ERROR AT ${plugin}`, output);
 };
 
 module.exports = function (bs) {
@@ -43,18 +51,25 @@ module.exports = function (bs) {
 			.pipe(bs.stream());
 	}
 
+	function compileJS() {
+		return src(js.src.compile, js.options)
+			.pipe(gulpBabel(js.babel))
+			.pipe(dest(js.dest.compile))
+			.pipe(bs.stream());
+	}
+
 	function syncChanges(done) {
 		bs.init(browserSync.options);
 
 		watch(pug.watch, compilePUG);
 		watch(sass.watch, compileSCSS);
 		watch(sprite.watch, compileSprite);
-
+		watch(js.watch, compileJS);
 		done();
 	}
 
 	return {
-		compile: parallel(compilePUG, compileSCSS, compileSprite),
+		compile: parallel(compilePUG, compileSCSS, compileSprite, compileJS),
 		sync: syncChanges,
 	};
 };
