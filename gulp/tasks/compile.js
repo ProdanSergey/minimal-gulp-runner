@@ -1,11 +1,21 @@
 const { src, dest, watch, parallel } = require('gulp');
+const { rollup: rollupPlugin } = require('rollup');
 const plumber = require('gulp-plumber');
 const gulpPug = require('gulp-pug');
 const gulpSass = require('gulp-sass');
 const gulpSvgSprite = require('gulp-svg-sprite');
-const gulpBabel = require('gulp-babel');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const { babel: babelPlugin } = require('@rollup/plugin-babel');
+const commonjs = require('@rollup/plugin-commonjs');
 
-const { sprite, pug, sass, js, browserSync } = require('../config.json');
+const {
+	sprite,
+	pug,
+	sass,
+	rollup,
+	babel,
+	browserSync,
+} = require('../config.json');
 
 const onError = ({ plugin, message, msg, line, column }) => {
 	let output;
@@ -51,11 +61,19 @@ module.exports = function (bs) {
 			.pipe(bs.stream());
 	}
 
-	function compileJS() {
-		return src(js.src.compile, js.options)
-			.pipe(gulpBabel(js.babel))
-			.pipe(dest(js.dest.compile))
-			.pipe(bs.stream());
+	async function compileJS(done) {
+		const bundle = await rollupPlugin({
+			input: rollup.src,
+			plugins: [nodeResolve(), commonjs(), babelPlugin(babel)],
+		});
+
+		await bundle.write({
+			file: rollup.dest,
+			format: rollup.format,
+		});
+
+		bs.reload();
+		done();
 	}
 
 	function syncChanges(done) {
@@ -64,7 +82,7 @@ module.exports = function (bs) {
 		watch(pug.watch, compilePUG);
 		watch(sass.watch, compileSCSS);
 		watch(sprite.watch, compileSprite);
-		watch(js.watch, compileJS);
+		watch(rollup.watch, compileJS);
 		done();
 	}
 

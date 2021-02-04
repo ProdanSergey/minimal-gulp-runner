@@ -55,6 +55,17 @@
 			}
 		}
 	},
+	"rollup": {
+		"src": "./src/js/index.js",
+		"dest": "./src/assets/js/bundle.js",
+		"format": "iife",
+		"watch": "./src/js/**/*.js"
+	},
+	"babel": {
+		"presets": ["@babel/preset-env"],
+		"babelHelpers": "bundled",
+		"exclude": "node_modules/**"
+	},
 	"html": {
 		"src": "./src/*.html",
 		"dest": "./build",
@@ -78,20 +89,10 @@
 		}
 	},
 	"js": {
-		"src": {
-			"build": "./src/assets/js/*.js",
-			"compile": "./src/js/**/*.js"
-		},
-		"dest": {
-			"build": "./build/",
-			"compile": "./src/assets/"
-		},
-		"watch": "./src/js/**/*.js",
+		"src": "./src/assets/js/*.js",
+		"dest": "./build/",
 		"options": {
 			"base": "src"
-		},
-		"babel": {
-			"presets": ["@babel/env"]
 		},
 		"uglify": {
 			
